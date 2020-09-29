@@ -2,14 +2,14 @@
 
 ## Syllabus
 
-### I.  Cloud Fundamentals
+### I. Cloud Fundamentals
 1. Cloud Overview
-2. Foundational and Compute Services
-3 Storage and Content Delivery
-4. Security
-5. Networking & Elasticity
-6. Messaging & Containers
-7. AWS Management
+2. Foundational and Compute Services (EC2, EBS, VPC, Lambda, Elastic Beanstalk)
+3 Storage and Content Delivery (S3, Glacier, DynamoDB, RDS, Redshift, Cloud Front)
+4. Security (Shield, WAF, IAM)
+5. Networking & Elasticity (Route 53, Autoscaling, Elastic Load Balancing)
+6. Messaging & Containers (SNS, SQS, ECS)
+7. AWS Management (Cloud Trail, Cloud Watch, Cloud Formation)
 
 → Deploy Static Website on AWS
 
