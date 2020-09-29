@@ -10,6 +10,7 @@
 5. Networking & Elasticity
 6. Messaging & Containers
 7. AWS Management
+
 → Deploy Static Website on AWS
 
 ### II. Deploy Infrastructure as Code
@@ -18,6 +19,7 @@
 3. Networking Infrastructure
 4. Servers and Security Groups
 5. Storage and Databases 
+
 → Deploy a High-Availability Web App Using CloudFormation
 
 ### III. Build CI/CD Pipelines, Monitoring & Logging
@@ -25,6 +27,7 @@
 2. Building a Continuous Integration Pipeline
 3. Enabling Continuous Delivery with Deployment Pipelines
 4. Monitoring Environments
+
 → Build an automated CI/CD Pipeline for UdaPeople
 
 ### IV. Microservices at Scale Using Kubernetes
@@ -32,4 +35,5 @@
 2. Use Docker Format Containers
 3. Containerization of Existing App
 4. Operationalize & Orchestrate Kubernetes
+
 → Operationalize a Machine Learning Microservice API
