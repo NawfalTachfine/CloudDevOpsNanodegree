@@ -37,3 +37,5 @@
 4. Operationalize & Orchestrate Kubernetes
 
 → Operationalize a Machine Learning Microservice API
+
+### V. Capstone Project
