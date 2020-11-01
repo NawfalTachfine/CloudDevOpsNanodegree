@@ -19,20 +19,20 @@ Goal: automatically deploy web application and underlying infrastructure
 
 ---
 
-## Project Rubric (temp)
+## Project Rubric (temporary)
 
 - Deployment basics
-  - Parameters
-  - Resources
-  - Outputs
-  - Check
+  - [ ] Parameters
+  - [ ] Resources
+  - [ ] Outputs
+  - [ ] Check
 - Load Balancer
-  - Target Group
-  - Health Check and Listener
+  - [ ] Target Group
+  - [ ] Health Check and Listener
 - Auto-Scaling
-  - Subnets
-  - Machine Specs
-  - SSH Key
+  - [ ] Subnets
+  - [ ] Machine Specs
+  - [ ] SSH Key
 - Bonus
-  - Outputs
-  - Bastion host
+  - [ ] Outputs
+  - [ ] Bastion host
