@@ -1,0 +1,224 @@
+Description: >
+  Nawfal Tachfine / Udacity's Cloud DevOps Nanodegree / Project 2
+  This template deploys a VPC, a public subnet, and two private subnets across 2 Availability Zones.
+  It deploys an Internet Gateway, with a default route on the public subnets.
+  It also deplots a pair of NAT gateways (one in each AZ) and default routes for them in the private subnets.
+  The template outputs references for all resources once they are created to make sure deployment is successful.
+
+Parameters:
+  EnvironmentName:
+    Description: Prefix for all resource names
+    Type: String
+  VpcCIDR:
+    Description: IP range in CIDR notation for VPC
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnetCIDR:
+    Description: IP range in CIDR notation for public subnet
+    Type: String
+    Default: 10.0.0.0/24
+  PrivateSubnetAlphaCIDR:
+    Description: IP range in CIDR notation for private subnet in 1st availability zone
+    Type: String
+    Default: 10.0.1.0/24
+  PrivateSubnetBetaCIDR:
+    Description: IP range in CIDR notation for private subnet in 2nd availability zone
+    Type: String
+    Default: 10.0.2.0/24
+
+Resources:
+  # VPC
+  VPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      # EnableDnsSupport: Boolean
+      # InstanceTenancy: String
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} VPC"
+  
+  # Internet Gateway
+  InternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${} Internet Gateway"
+  InternetGatewayAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+      # VpnGatewayId: String
+  
+  # Subnets
+  PublicSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetCIDR
+      # Ipv6CidrBlock: String
+      MapPublicIpOnLaunch: true
+      # OutpostArn: String
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Public Subnet"
+  PrivateSubnetAlpha:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetCIDR
+      # Ipv6CidrBlock: String
+      MapPublicIpOnLaunch: false
+      # OutpostArn: String
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Private Subnet Alpha"
+  PrivateSubnetBeta:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      AssignIpv6AddressOnCreation: false
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetCIDR
+      # Ipv6CidrBlock: String
+      MapPublicIpOnLaunch: false
+      # OutpostArn: String
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Private Subnet Beta"
+  
+  # NAT Gateway
+  NatGatewayEIP:
+    Type: "AWS::EC2::EIP"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      # InstanceId: String
+      # PublicIpv4Pool: String
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} NAT Gateway Elastic IP"
+  NatGateway:
+    Type: "AWS::EC2::NatGateway"
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} NAT Gateway"
+
+  # Public Route Table
+  PublicRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Public Routes"
+      VpcId: !Ref VPC
+  DefaultPublicRoute:
+    Type: "AWS::EC2::Route"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      # CarrierGatewayId: String
+      # DestinationIpv6CidrBlock: String
+      # EgressOnlyInternetGatewayId: String
+      # InstanceId: String
+      # LocalGatewayId: String
+      # NatGatewayId: String
+      # NetworkInterfaceId: String
+      # TransitGatewayId: String
+      # VpcEndpointId: String
+      # VpcPeeringConnectionId: String
+  PublicSubnetRouteTableAssociation:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  # Private Route Table Alpha
+  PrivateRouteTableAlpha:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Private Routes for AZ-0"
+      VpcId: !Ref VPC
+  DefaultPrivateRouteAlpha:
+    Type: "AWS::EC2::Route"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableAlpha
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+  PrivateSubnetRouteTableAssociationAlpha:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableAlpha
+      SubnetId: !Ref PrivateSubnetAlpha
+  
+  # Private Route Table Beta
+  PrivateRouteTableBeta:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Private Routes for AZ-1"
+      VpcId: !Ref VPC
+  DefaultPrivateRouteBeta:
+    Type: "AWS::EC2::Route"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableBeta
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+  PrivateSubnetRouteTableAssociationBeta:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableBeta
+      SubnetId: !Ref PrivateSubnetBeta 
+
+Outputs:
+  Resource:
+    Description: toto
+    Value: !Ref Resource
+    Export:
+      Name: !Sub ${EnvironmentName}-toto
+  VPC:
+    Description: VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${EnvironmentName}-VPC
+  PublicSubnet:
+    Description: Public Subnet
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicSubnet
+  PublicRouteTable:
+    Description: Public Route Table
+    Value: !Ref PublicRouteTable
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicRouteTable
+  PrivateSubnets:
+    Description: Private Subnets
+    Value: !Join [",", [!Ref PrivateSubnetAlpha, !Ref PrivateSubnetBeta]]
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicSubnet
+  PrivateRouteTables:
+    Description: Private Route Tables
+    Value: !Join [",", [!Ref PrivateRouteTableAlpha, !Ref PrivateRouteTableBeta]]
+    Export:
+      Name: !Sub ${EnvironmentName}-PrivateRouteTables
+    
+    
+      
+    
