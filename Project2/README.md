@@ -19,6 +19,15 @@ Goal: automatically deploy web application and underlying infrastructure
 
 ---
 
+## Progress
+
+- [x] infrastructure diagram
+- [x] network template
+- [ ] servers template
+- [ ] documentation
+
+---
+
 ## Project Rubric (temporary)
 
 - Deployment basics
