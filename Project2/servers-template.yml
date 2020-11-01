@@ -1,0 +1,230 @@
+Description: >
+  Nawfal Tachfine / Udacity's Cloud DevOps Nanodegree / Project 2
+  This template ...
+
+Parameters:
+  EnvironmentName:
+    Description: Prefix for all resource names
+    Type: String
+  ServerInstanceType:
+    Description: Instance type for the web servers
+    Type: String
+    Default: "t2.medium"
+  ServerImageId:
+    Description: Instance AMI ID
+    Type: String
+    Default: "ami-0de12f76efe134f2f"
+  ServerDiskSize:
+    Description: Hard disk size for the web servers (GiB)
+    Type: Integer
+    Default: 10
+
+Resources:
+  # Security Groups
+  LoadBalancerSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Allow HTTP traffic to load balancer
+      GroupName: LoadBalancer
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPC"
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+  WebServerSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Allow HTTP traffic to hosts and 
+      GroupName: WebServer
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPC"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65536
+          CidrIp: 0.0.0.0/0
+
+  # Launch Configuration
+  WebAppLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      KeyName: bastion-key
+      ImageId: !Ref ServerImageId
+      InstanceType: !Ref ServerInstanceType
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: !Ref ServerDiskSize
+      SecurityGroups:
+        - Ref: WebServerSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update -y
+          apt-get install unzip awscli -y
+          apt-get install apache2 -y
+          systemctl start apache2.service
+          cd /var/www/html
+          aws s3 cp s3://udacity-demo-1/udacity.zip .
+          unzip -o udacity.zip
+      # AssociatePublicIpAddress: Boolean
+      # ClassicLinkVPCId: String
+      # ClassicLinkVPCSecurityGroups:
+      #   - String
+      # EbsOptimized: Boolean
+      # IamInstanceProfile: String
+      # InstanceId: String
+      # InstanceMonitoring: Boolean
+      # KernelId: String
+      # LaunchConfigurationName: String
+      # MetadataOptions:
+      #   MetadataOption
+      # PlacementTenancy: String
+      # RamDiskId: String
+      # SpotPrice: String
+
+  # Autoscaling Group
+  WebAppGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      VPCZoneIdentifier:
+        - Fn::ImportValue:
+            !Sub "${EnvironmentName}-PrivateSubnets"
+      LaunchConfigurationName: WebAppLaunchConfiguration
+      MinSize: '3'
+      MaxSize: '5'
+      TargetGroupARNs:
+        - WebAppTargetGroup
+      # AutoScalingGroupName: String
+      # AvailabilityZones:
+      #   - String
+      # CapacityRebalance: Boolean
+      # Cooldown: String
+      # DesiredCapacity: String
+      # HealthCheckGracePeriod: Integer
+      # HealthCheckType: String
+      # InstanceId: String
+      # LaunchTemplate:
+      #   LaunchTemplateSpecification
+      # LifecycleHookSpecificationList:
+      #   - LifecycleHookSpecification
+      # LoadBalancerNames:
+      #   - String
+      # MaxInstanceLifetime: Integer
+      # MetricsCollection:
+      #   - MetricsCollection
+      # MixedInstancesPolicy:
+      #   MixedInstancesPolicy
+      # NewInstancesProtectedFromScaleIn: Boolean
+      # NotificationConfigurations:
+      #   - NotificationConfiguration
+      # PlacementGroup: String
+      # ServiceLinkedRoleARN: String
+      # Tags:
+      #   - TagProperty
+      # TerminationPolicies:
+      #   - String  
+
+  # Application Load Balancer
+  WebAppLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Subnets:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PublicSubnet"
+      SecurityGroups:
+        - Ref: LoadBalancerSecurityGroup
+      # IpAddressType: String
+      # LoadBalancerAttributes:
+      #   - LoadBalancerAttribute
+      # Name: String
+      # Scheme: String
+      # SubnetMappings:
+      #   - SubnetMapping
+      # Tags:
+      #   - Tag
+      # Type: String
+  WebAppListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions: 
+        - Type: forward
+          TargetGroupArn:
+            Ref: WebAppTargetGroup
+      LoadBalancerArn: WebAppLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      # AlpnPolicy:
+      #   - String
+      # Certificates:
+      #   - Certificate
+      # SslPolicy: String
+  WebAppListenerRule:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref WebAppTargetGroup
+      Conditions:
+        - Field: path-pattern
+          Values: [/]
+      ListenerArn: !Ref WebAppListener
+      Priority: 1
+  WebAppTargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      Protocol: HTTP
+      Port: 8080
+      VpcId:
+        Fn::ImportValue:
+          Fn::Sub: "${EnvironmentName}-VPC"
+      # HealthCheckEnabled: Boolean
+      # HealthCheckPort: 8080
+      # Matcher:
+      #   Matcher
+      # Name: String
+      # Tags:
+      #   - Tag
+      # TargetGroupAttributes:
+      #   - TargetGroupAttribute
+      # TargetType: String
+      # Targets:
+      #   - TargetDescription
+      
+Outputs:
+  LoadBalancerURL:
+    Description: Load Balancer URL
+    Value: !GetAtt WebAppLoadBalancer.DNSName
+    Export:
+      Name: !Sub ${EnvironmentName}-LoadBalancerURL
+  
+    
+      
+    
