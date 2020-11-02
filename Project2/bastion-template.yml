@@ -1,0 +1,100 @@
+Description: >
+  Nawfal Tachfine / Udacity's Cloud DevOps Nanodegree / Project 2
+  This template deploys a bastion host server and an associated security group.
+  The bastion host / jump box gives restricted SSH access to an administrator.
+
+Parameters:
+  EnvironmentName:
+    Description: Prefix for all resource names
+    Type: String
+  AdminIpAddress:
+    Description: Admin terminal IP address
+    Type: String
+
+Resources:
+  # Bastion Security Grooup
+  BastionSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Allow SSH traffic to bastion host
+      GroupName: Bastion
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp:  0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Sub "${AdminIpAddress}/32"
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPC"
+
+  # Bastion Host
+  BastionHost:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      # AdditionalInfo: String
+      # Affinity: String
+      AvailabilityZone: !Select [0, !GetAZs '']
+      # BlockDeviceMappings:
+      #   - BlockDeviceMapping
+      # CpuOptions:
+      #   CpuOptions
+      # CreditSpecification:
+      #   CreditSpecification
+      # DisableApiTermination: Boolean
+      # EbsOptimized: Boolean
+      # ElasticGpuSpecifications:
+      #   - ElasticGpuSpecification
+      # ElasticInferenceAccelerators:
+      #   - ElasticInferenceAccelerator
+      # HibernationOptions:
+      #   HibernationOptions
+      # HostId: String
+      # HostResourceGroupArn: String
+      # IamInstanceProfile: String
+      ImageId: "ami-0de12f76efe134f2f"  # Amazon Linux 2 AMI
+      # InstanceInitiatedShutdownBehavior: String
+      InstanceType: "t2.micro"
+      # Ipv6AddressCount: Integer
+      # Ipv6Addresses:
+      #   - InstanceIpv6Address
+      # KernelId: String
+      KeyName: devops-sandbox-key
+      # LaunchTemplate:
+      #   LaunchTemplateSpecification
+      # LicenseSpecifications:
+      #   - LicenseSpecification
+      # Monitoring: Boolean
+      # NetworkInterfaces:
+      #   - NetworkInterface
+      # PlacementGroupName: String
+      # PrivateIpAddress: String
+      # RamdiskId: String
+      SecurityGroupIds:
+        - !GetAtt BastionSecurityGroup.GroupId
+      # SecurityGroups:
+      #   - String
+      # SourceDestCheck: Boolean
+      # SsmAssociations:
+      #   - SsmAssociation
+      SubnetId: 
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-PublicSubnet"
+      Tags:
+        - Key: Name
+          Value: "Bastion Host"
+      # Tenancy: String
+      # UserData: String
+      # Volumes:
+      #   - Volume
+
+Outputs:
+  BastionURL:
+    Description: Bastion Host URL
+    Value: !GetAtt BastionHost.PublicDnsName
+    Export:
+      Name: !Sub ${EnvironmentName}-BastionURL
