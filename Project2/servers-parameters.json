@@ -1,7 +1,7 @@
 [
     {"ParameterKey": "EnvironmentName", "ParameterValue": "UdacityProject"},
     {"ParameterKey": "ServerInstanceType", "ParameterValue": "t2.medium"},
-    {"ParameterKey": "ServerDiskSize", "ParameterValue": 10},
-    {"ParameterKey": "ServerImageId", "ParameterValue": "ami-0de12f76efe134f2f"},
+    {"ParameterKey": "ServerDiskSize", "ParameterValue": "10"},
+    {"ParameterKey": "ServerImageId", "ParameterValue": "ami-014d8dccd70fd2632"},
     {"ParameterKey": "AdminIpAddress", "ParameterValue": "109.24.176.114"}
 ]

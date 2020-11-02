@@ -1,6 +1,6 @@
 Description: >
   Nawfal Tachfine / Udacity's Cloud DevOps Nanodegree / Project 2
-  This template ...
+  This template does stuff ...
 
 Parameters:
   EnvironmentName:
@@ -13,11 +13,14 @@ Parameters:
   ServerImageId:
     Description: Instance AMI ID
     Type: String
-    Default: "ami-0de12f76efe134f2f"
+    Default: "ami-014d8dccd70fd2632"
   ServerDiskSize:
     Description: Hard disk size for the web servers (GiB)
-    Type: Integer
-    Default: 10
+    Type: String
+    Default: '10'
+  AdminIpAddress:
+    Description: Admin terminal IP address
+    Type: String
 
 Resources:
   # Security Groups
@@ -63,9 +66,27 @@ Resources:
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 0
-          ToPort: 65536
+          ToPort: 65535
           CidrIp: 0.0.0.0/0
-
+  BastionSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Allow SSH traffic to bastion host
+      GroupName: Bastion
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp:  0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Sub "${AdminIpAddress}/32"
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPC"
+  
   # Launch Configuration
   WebAppLaunchConfiguration:
     Type: "AWS::AutoScaling::LaunchConfiguration"
@@ -87,8 +108,9 @@ Resources:
           apt-get install apache2 -y
           systemctl start apache2.service
           cd /var/www/html
-          aws s3 cp s3://udacity-demo-1/udacity.zip .
-          unzip -o udacity.zip
+          # aws s3 cp s3://udacity-demo-1/udacity.zip .
+          # unzip -o udacity.zip
+          echo "Udacity Demo Web Server Up and Running!" > index.html
       # AssociatePublicIpAddress: Boolean
       # ClassicLinkVPCId: String
       # ClassicLinkVPCSecurityGroups:
@@ -106,17 +128,17 @@ Resources:
       # SpotPrice: String
 
   # Autoscaling Group
-  WebAppGroup:
+  WebAppAutoScalingGroup:
     Type: "AWS::AutoScaling::AutoScalingGroup"
     Properties:
       VPCZoneIdentifier:
         - Fn::ImportValue:
             !Sub "${EnvironmentName}-PrivateSubnets"
-      LaunchConfigurationName: WebAppLaunchConfiguration
-      MinSize: '3'
-      MaxSize: '5'
+      LaunchConfigurationName: !Ref WebAppLaunchConfiguration
+      MinSize: '4'
+      MaxSize: '4'
       TargetGroupARNs:
-        - WebAppTargetGroup
+        - !Ref WebAppTargetGroup
       # AutoScalingGroupName: String
       # AvailabilityZones:
       #   - String
@@ -153,6 +175,7 @@ Resources:
     Properties:
       Subnets:
         - Fn::ImportValue: !Sub "${EnvironmentName}-PublicSubnet"
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PublicSubnetAux"
       SecurityGroups:
         - Ref: LoadBalancerSecurityGroup
       # IpAddressType: String
@@ -172,7 +195,7 @@ Resources:
         - Type: forward
           TargetGroupArn:
             Ref: WebAppTargetGroup
-      LoadBalancerArn: WebAppLoadBalancer
+      LoadBalancerArn: !Ref WebAppLoadBalancer
       Port: 80
       Protocol: HTTP
       # AlpnPolicy:
