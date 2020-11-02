@@ -14,17 +14,21 @@ Parameters:
     Type: String
     Default: 10.0.0.0/16
   PublicSubnetCIDR:
-    Description: IP range in CIDR notation for public subnet
+    Description: IP range in CIDR notation for public subnet in 1st availability zone
     Type: String
     Default: 10.0.0.0/24
+  PublicSubnetAuxCIDR:
+    Description: IP range in CIDR notation for public subnet in 2nd availability zone
+    Type: String
+    Default: 10.0.1.0/24
   PrivateSubnetAlphaCIDR:
     Description: IP range in CIDR notation for private subnet in 1st availability zone
     Type: String
-    Default: 10.0.1.0/24
+    Default: 10.0.2.0/24
   PrivateSubnetBetaCIDR:
     Description: IP range in CIDR notation for private subnet in 2nd availability zone
     Type: String
-    Default: 10.0.2.0/24
+    Default: 10.0.3.0/24
 
 Resources:
   # VPC
@@ -67,6 +71,19 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub "${EnvironmentName} Public Subnet"
+  PublicSubnetAux:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetAuxCIDR
+      MapPublicIpOnLaunch: true
+      # AssignIpv6AddressOnCreation: false
+      # Ipv6CidrBlock: String
+      # OutpostArn: String
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Auxiliary Public Subnet"
   PrivateSubnetAlpha:
     Type: "AWS::EC2::Subnet"
     Properties:
@@ -105,6 +122,16 @@ Resources:
       Tags:
         - Key:  Name
           Value: !Sub "${EnvironmentName} NAT Gateway Elastic IP"
+  NatGatewayEIPAux:
+    Type: "AWS::EC2::EIP"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      # InstanceId: String
+      # PublicIpv4Pool: String
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Auxiliary NAT Gateway Elastic IP"
   NatGateway:
     Type: "AWS::EC2::NatGateway"
     Properties:
@@ -113,6 +140,14 @@ Resources:
       Tags:
         - Key:  Name
           Value: !Sub "${EnvironmentName} NAT Gateway"
+  NatGatewayAux:
+    Type: "AWS::EC2::NatGateway"
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIPAux.AllocationId
+      SubnetId: !Ref PublicSubnetAux
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Auxiliary NAT Gateway"
 
   # Public Route Table
   PublicRouteTable:
@@ -144,6 +179,37 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet
+
+  # Auxiliary Public Route Table
+  PublicRouteTableAux:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key:  Name
+          Value: !Sub "${EnvironmentName} Auxiliary Public Routes"
+      VpcId: !Ref VPC
+  DefaultPublicRouteAux:
+    Type: "AWS::EC2::Route"
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTableAux
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      # CarrierGatewayId: String
+      # DestinationIpv6CidrBlock: String
+      # EgressOnlyInternetGatewayId: String
+      # InstanceId: String
+      # LocalGatewayId: String
+      # NatGatewayId: String
+      # NetworkInterfaceId: String
+      # TransitGatewayId: String
+      # VpcEndpointId: String
+      # VpcPeeringConnectionId: String
+  PublicSubnetRouteTableAssociationAux:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTableAux
+      SubnetId: !Ref PublicSubnetAux
 
   # Private Route Table Alpha
   PrivateRouteTableAlpha:
@@ -198,6 +264,11 @@ Outputs:
     Value: !Ref PublicSubnet
     Export:
       Name: !Sub ${EnvironmentName}-PublicSubnet
+  PublicSubnetAux:
+    Description: Auxiliary Public Subnets
+    Value: !Ref PublicSubnetAux
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicSubnetAux
   PublicRouteTable:
     Description: Public Route Table
     Value: !Ref PublicRouteTable
