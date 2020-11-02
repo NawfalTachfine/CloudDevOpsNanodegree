@@ -18,9 +18,6 @@ Parameters:
     Description: Hard disk size for the web servers (GiB)
     Type: String
     Default: '10'
-  AdminIpAddress:
-    Description: Admin terminal IP address
-    Type: String
 
 Resources:
   # Security Groups
