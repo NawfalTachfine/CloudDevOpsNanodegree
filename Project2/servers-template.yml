@@ -68,24 +68,6 @@ Resources:
           FromPort: 0
           ToPort: 65535
           CidrIp: 0.0.0.0/0
-  BastionSecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
-    Properties:
-      GroupDescription: Allow SSH traffic to bastion host
-      GroupName: Bastion
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp:  0.0.0.0/0
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: !Sub "${AdminIpAddress}/32"
-      VpcId:
-        Fn::ImportValue:
-          !Sub "${EnvironmentName}-VPC"
   
   # Launch Configuration
   WebAppLaunchConfiguration:
