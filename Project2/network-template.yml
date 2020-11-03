@@ -269,16 +269,21 @@ Outputs:
     Value: !Ref PublicSubnetAux
     Export:
       Name: !Sub ${EnvironmentName}-PublicSubnetAux
-  PublicRouteTable:
+  PublicRouteTables:
     Description: Public Route Table
-    Value: !Ref PublicRouteTable
+    Value: !Join [",", [!Ref PublicRouteTable, !Ref PublicRouteTableAux]]
     Export:
       Name: !Sub ${EnvironmentName}-PublicRouteTable
-  PrivateSubnets:
-    Description: Private Subnets
-    Value: !Join [",", [!Ref PrivateSubnetAlpha, !Ref PrivateSubnetBeta]]
+  PrivateSubnetAlpha:
+    Description: Private Subnet Alpha
+    Value: !Ref PrivateSubnetAlpha
     Export:
-      Name: !Sub ${EnvironmentName}-PrivateSubnets
+      Name: !Sub ${EnvironmentName}-PrivateSubnetAlpha
+  PrivateSubnetBeta:
+    Description: Private Subnet Beta
+    Value: !Ref PrivateSubnetBeta
+    Export:
+      Name: !Sub ${EnvironmentName}-PrivateSubnetBeta
   PrivateRouteTables:
     Description: Private Route Tables
     Value: !Join [",", [!Ref PrivateRouteTableAlpha, !Ref PrivateRouteTableBeta]]
