@@ -1,0 +1,4 @@
+[
+    {"ParameterKey": "EnvironmentName", "ParameterValue": "UdacityProject"},
+    {"ParameterKey": "AdminIpAddress", "ParameterValue": "<YOUR-IP-HERE>"}
+]
