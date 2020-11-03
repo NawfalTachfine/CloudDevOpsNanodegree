@@ -60,6 +60,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 0
@@ -111,14 +115,14 @@ Resources:
     Type: "AWS::AutoScaling::AutoScalingGroup"
     Properties:
       VPCZoneIdentifier:
-        - Fn::ImportValue:
-            !Sub "${EnvironmentName}-PrivateSubnets"
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PrivateSubnetAlpha"
+        - Fn::ImportValue: !Sub "${EnvironmentName}-PrivateSubnetBeta"
       LaunchConfigurationName: !Ref WebAppLaunchConfiguration
       MinSize: '4'
       MaxSize: '4'
       TargetGroupARNs:
         - !Ref WebAppTargetGroup
-      # AutoScalingGroupName: String
+      AutoScalingGroupName: Web Servers Group
       # AvailabilityZones:
       #   - String
       # CapacityRebalance: Boolean
@@ -200,13 +204,13 @@ Resources:
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 8
+      HealthCheckPort: 8080
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 5
       Protocol: HTTP
-      Port: 8080
+      Port: 80
       VpcId:
-        Fn::ImportValue:
-          Fn::Sub: "${EnvironmentName}-VPC"
+        Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
       # HealthCheckEnabled: Boolean
       # HealthCheckPort: 8080
       # Matcher:
@@ -223,9 +227,9 @@ Resources:
 Outputs:
   LoadBalancerURL:
     Description: Load Balancer URL
-    Value: !GetAtt WebAppLoadBalancer.DNSName
+    Value: !Join ["", ["http://", !GetAtt WebAppLoadBalancer.DNSName]]
     Export:
-      Name: !Sub ${EnvironmentName}-LoadBalancerURL
+      Name: !Sub "${EnvironmentName}-LoadBalancerURL"
   
     
       
