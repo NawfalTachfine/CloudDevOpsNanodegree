@@ -74,7 +74,7 @@ Resources:
   WebAppLaunchConfiguration:
     Type: "AWS::AutoScaling::LaunchConfiguration"
     Properties:
-      KeyName: bastion-key
+      # KeyName: bastion-key
       ImageId: !Ref ServerImageId
       InstanceType: !Ref ServerInstanceType
       BlockDeviceMappings:
@@ -83,6 +83,7 @@ Resources:
             VolumeSize: !Ref ServerDiskSize
       SecurityGroups:
         - Ref: WebServerSecurityGroup
+      IamInstanceProfile: !Ref S3ReadProfile
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
@@ -91,15 +92,14 @@ Resources:
           apt-get install apache2 -y
           systemctl start apache2.service
           cd /var/www/html
-          # aws s3 cp s3://udacity-demo-1/udacity.zip .
-          # unzip -o udacity.zip
-          echo "Udacity Demo Web Server Up and Running!" > index.html
+          aws s3 cp s3://udacity-demo-1/udacity.zip .
+          unzip -o udacity.zip
+          # echo "Udacity Demo Web Server Up and Running!" > index.html
       # AssociatePublicIpAddress: Boolean
       # ClassicLinkVPCId: String
       # ClassicLinkVPCSecurityGroups:
       #   - String
       # EbsOptimized: Boolean
-      # IamInstanceProfile: String
       # InstanceId: String
       # InstanceMonitoring: Boolean
       # KernelId: String
@@ -223,7 +223,39 @@ Resources:
       # TargetType: String
       # Targets:
       #   - TargetDescription
-      
+
+  # S3 Access  
+  S3ReadRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Description: "Read only role for specific S3 bucket"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      Path: "/"
+      # RoleName: String
+      # MaxSessionDuration: Integer
+      # PermissionsBoundary: String
+      # Policies:
+      #   - Policy
+      # Tags:
+      #   - String
+  S3ReadProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      InstanceProfileName: String
+      Path: "/"
+      Roles:
+        - !Ref S3ReadRole
+        
 Outputs:
   LoadBalancerURL:
     Description: Load Balancer URL
