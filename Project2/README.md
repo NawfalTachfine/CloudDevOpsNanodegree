@@ -20,7 +20,7 @@
 ## Infrastructure as Code
 1. Build the network `./scripts/create.sh servers-stack servers-template.yml servers-parameters.json`
 2. Deploy the servers `./scripts/create.sh network-stack network-template.yml network-parameters.json`
-3. (Optional) Deploy bastion host for SSH access to servers. Make sure to add your IP address to `bastion-parameters.json` before. 
+3. (Optional) Deploy bastion host for SSH access to servers. Make sure to add your IP address to `bastion-parameters.json` before. `/scripts/create.sh bastion-stack bastion-template.yml bastion-parameters.json`
 
 ---
 
