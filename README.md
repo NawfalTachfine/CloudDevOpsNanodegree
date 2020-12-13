@@ -44,4 +44,4 @@
 
 ### V. Capstone Project
 
-→ [Capstone: putting it all together]()
+→ [Capstone: putting it all together](https://github.com/NawfalTachfine/CloudDevOpsNanodegree)
