@@ -9,11 +9,10 @@
 ### Utilize Deployment Strategies to design and build CI/CD pipelines that support Continuous Delivery processes
 
 + [Project Code (URL01)](https://github.com/NawfalTachfine/UdaPeopleCICD)
-+ Console output of various pre-deploy job failure scenarios:
-  + [Build Jobs that failed because of compile errors (SCREENSHOT01)](assets/screenshot_01.pdf)
-  + [Failed unit tests (SCREENSHOT02)](assets/screenshot_02.pdf)
-  + [Failure because of vulnerable packages (SCREENSHOT03)](assets/screenshot_03.pdf)
-  + [An alert from one of your failed builds (SCREENSHOT04)](assets/screenshot_04.pdf)
+  + [Build Jobs that failed because of compile errors (SCREENSHOT01)](assets/screenshot_01.pdf).
+  + Failed unit tests for the [front-end (SCREENSHOT02-1)](assets/screenshot_02_1.pdf) and the [back-end (SCREENSHOT02-2)](SCREENSHOT02)](assets/screenshot_02_2.pdf).
+  + [Failure because of vulnerable packages (SCREENSHOT03)](assets/screenshot_03.pdf).
+  + [An alert from one of your failed builds (SCREENSHOT04)](assets/screenshot_04.pdf).
 
 ### Utilize a configuration management tool to accomplish deployment to cloud-based servers
 
