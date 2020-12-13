@@ -12,7 +12,7 @@
 6. Messaging & Containers *(SNS, SQS, ECS)*
 7. AWS Management *(Cloud Trail, Cloud Watch, Cloud Formation)*
 
-→ [Project I: Deploy Static Website on AWS](https://github.com/NawfalTachfine/CloudDevOpsNanodegree/tree/master/Project1)
+→ [Project I: Deploy Static Website on AWS](./Project1)
 
 ### II. Deploy Infrastructure as Code
 
@@ -22,7 +22,7 @@
 4. Servers and Security Groups
 5. Storage and Databases
 
-→ [Project II: Deploy a High-Availability Web App Using CloudFormation](https://github.com/NawfalTachfine/CloudDevOpsNanodegree/tree/master/Project2)
+→ [Project II: Deploy a High-Availability Web App Using CloudFormation](./Project2)
 
 ### III. Build CI/CD Pipelines, Monitoring & Logging
 
@@ -44,4 +44,4 @@
 
 ### V. Capstone Project
 
-→ [Capstone: putting it all together](https://github.com/NawfalTachfine/CloudDevOpsNanodegree)
+→ [Capstone: putting it all together](./Project5)
