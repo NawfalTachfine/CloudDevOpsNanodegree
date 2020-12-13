@@ -1,6 +1,6 @@
 # Project 3: Give Your Application Auto-Deploy Superpowers
 
-## I. Section 1: Selling CI/CD to your Team/Organization
+## I. Selling CI/CD to your Team/Organization
 
 + [Continous Delivery Presentation](presentation.pdf)
 
