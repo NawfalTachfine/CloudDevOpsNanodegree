@@ -31,7 +31,7 @@
 3. Enabling Continuous Delivery with Deployment Pipelines
 4. Monitoring Environments
 
-→ [Project III: Build an automated CI/CD Pipeline for UdaPeople](https://github.com/NawfalTachfine/UdaPeopleCICD)
+→ [Project III: Build an automated CI/CD Pipeline for UdaPeople](./Project3)
 
 ### IV. Microservices at Scale Using Kubernetes
 
@@ -40,7 +40,7 @@
 3. Containerization of Existing App
 4. Operationalize & Orchestrate Kubernetes
 
-→ [Project IV: Operationalize a Machine Learning Microservice API](https://github.com/NawfalTachfine/MLMicroservice)
+→ [Project IV: Operationalize a Machine Learning Microservice API](./Project4)
 
 ### V. Capstone Project
 
