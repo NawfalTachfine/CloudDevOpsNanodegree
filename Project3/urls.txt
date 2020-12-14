@@ -1,3 +1,4 @@
 https://github.com/NawfalTachfine/UdaPeopleCICD
 https://udapeople-c56e665.s3.eu-west-3.amazonaws.com/index.html
-http://udapeople-c56e665.s3.eu-west-3.amazonaws.com/index.html
+d20fyhn4egfhdk.cloudfront.net
+ec2-15-237-96-72.eu-west-3.compute.amazonaws.com
