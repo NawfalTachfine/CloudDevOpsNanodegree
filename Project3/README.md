@@ -20,7 +20,7 @@
 + [Console output of a successful rollback after a failed smoke test. (SCREENSHOT07)](assets/screenshot_07.pdf)
 + [Console output of successful promotion of new version to production in CloudFront. (SCREENSHOT08)](assets/screenshot_08.pdf)
 + [Console output of successful cleanup job that removes old S3 bucket and EC2 instance. (SCREENSHOT09)](assets/screenshot_09.pdf)
-+ [Evidence that deploy jobs only happen on master branch. (SCREENSHOT10)](assets/screenshot_10.pdf)
++ Evidence that deploy jobs only happen on master branch: [non-master pipeline (SCREENSHOT10-1)](assets/screenshot_10_1.pdf), master pipeline ([SCREENSHOT10-2](assets/screenshot_10_2.pdf), [SCREENSHOT10-3](assets/screenshot_10_3.pdf))
 + Evidence of deployed and functioning front-end application in an [S3 bucket](https://udapeople-c56e665.s3.eu-west-3.amazonaws.com/index.html) and in [CloudFront](d20fyhn4egfhdk.cloudfront.net).
 + [Evidence of healthy back-end application (URL04)](ec2-15-237-96-72.eu-west-3.compute.amazonaws.com)
 
