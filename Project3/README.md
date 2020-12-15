@@ -22,12 +22,12 @@
 + [Console output of successful cleanup job that removes old S3 bucket and EC2 instance. (SCREENSHOT09)](assets/screenshot_09.pdf)
 + Evidence that deploy jobs only happen on master branch: [non-master pipeline (SCREENSHOT10-1)](assets/screenshot_10_1.pdf), master pipeline ([SCREENSHOT10-2](assets/screenshot_10_2.pdf), [SCREENSHOT10-3](assets/screenshot_10_3.pdf))
 + Evidence of deployed and functioning front-end application in an [S3 bucket](https://udapeople-7e280a7.s3.eu-west-3.amazonaws.com/index.html) and in [CloudFront](d20fyhn4egfhdk.cloudfront.net).
-+ [Evidence of healthy back-end application (URL04)](ec2-15-237-62-197.eu-west-3.compute.amazonaws.com)
++ [Evidence of healthy back-end application (URL04)](ec2-15-237-62-197.eu-west-3.compute.amazonaws.com:3030/api/status)
 
 ---
 
 ## III. Turn Errors into Sirens
 
-+ [Evidence of Prometheus Server (URL05)](www.google.com)
++ [Evidence of Prometheus Server (URL05)](ec2-15-237-138-170.eu-west-3.compute.amazonaws.com:9090)
 + [Evidence that Prometheus is monitoring memory, cpu and disk usage of EC2 instances (SCREENSHOT11)](assets/screenshot_11.pdf)
 + [Evidence that Prometheus and AlertManager send alerts when certain conditions exist in the EC2 instance (SCREENSHOT12)](assets/screenshot_12.pdf)

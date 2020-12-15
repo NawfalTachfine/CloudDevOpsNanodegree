@@ -1,5 +1,5 @@
 https://github.com/NawfalTachfine/UdaPeopleCICD
 https://udapeople-7e280a7.s3.eu-west-3.amazonaws.com/index.html
 d20fyhn4egfhdk.cloudfront.net
-ec2-15-237-62-197.eu-west-3.compute.amazonaws.com
-ec2-15-237-138-170.eu-west-3.compute.amazonaws.com
+ec2-15-237-62-197.eu-west-3.compute.amazonaws.com:3030/api/status
+ec2-15-237-138-170.eu-west-3.compute.amazonaws.com:9090
