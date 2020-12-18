@@ -8,7 +8,7 @@ The project automatically builds and deploys a machine learning prediction web s
 + [Image Repository](https://hub.docker.com/repository/docker/nawfaltachfine/ml-microservice)
 
 ## Automatic Container Builds
-+ Continuous integration: code linting ([not working](assets/1.linter_error.pdf) / [working](2.linter_fix.pdf))
++ Continuous integration: code linting ([not working](assets/1.linter_error.pdf) / [working](assets/2.linter_fix.pdf))
 + The *Docker* image is automatically [built and pushed to the repository](assets/3.successful_deployment.pdf).
 
 ## Infrastructure as Code and Rolling Deployments
