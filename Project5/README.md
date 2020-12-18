@@ -9,8 +9,8 @@ The project automatically builds and deploys a machine learning prediction web s
 
 ## Automatic Container Builds
 + Continuous integration: code linting ([not working](assets/1.linter_error.pdf) / [working](2.linter_fix.pdf))
-+ The *Docker* image is automatically [built and pushed to the repository](assets/3.successful_deployment).
++ The *Docker* image is automatically [built and pushed to the repository](assets/3.successful_deployment.pdf).
 
 ## Infrastructure as Code and Rolling Deployments
 + The cluster is provisioned using the *CloudFormation* templates in the `eks` directory.
-+ [Rolling updates example](assets/3.successful_deployment)
++ [Rolling updates example](assets/3.successful_deployment.pdf)
