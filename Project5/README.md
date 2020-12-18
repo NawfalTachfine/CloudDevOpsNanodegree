@@ -1,4 +1,4 @@
-# [Project 5 (Capstone): Operationalizing a Machine Learning Microservice API](https://github.com/NawfalTachfine/DevOpsCapstone)
+# [Project 5 (Capstone)](https://github.com/NawfalTachfine/DevOpsCapstone)
 
 ## Project Scope
 The project automatically builds and deploys a machine learning prediction web service with 3 replicas on a cloud kubernetes cluster.
